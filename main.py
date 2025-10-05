@@ -138,5 +138,14 @@ application.add_handler(CallbackQueryHandler(button_handler))
 @app.route(f"/webhook/{TOKEN}", methods=["POST"])
 def webhook():
     update = Update.de_json(request.get_json(force=True), application.bot)
-    application.update_queue.put(update)
-    return "OK"
+    
+    import asyncio
+    try:
+        asyncio.run(application.update_queue.put(update))
+    except RuntimeError:
+        # If event loop already running (Render sometimes does this)
+        loop = asyncio.get_event_loop()
+        loop.create_task(application.update_queue.put(update))
+    
+    return "OK", 200
+
