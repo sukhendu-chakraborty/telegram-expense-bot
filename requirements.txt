@@ -1,4 +1,5 @@
 python-telegram-bot==20.4
 pymongo==4.8.0
+flask
 python-dotenv==1.0.1
 certifi
