@@ -1,14 +1,7 @@
-<<<<<<< HEAD
-python-telegram-bot==20.4
-pymongo==4.8.0
-flask
-python-dotenv==1.0.1
-certifi
-=======
+
 flask==2.3.2
 pymongo==4.3.3
 python-telegram-bot==20.3
 python-dotenv==1.0.0
 gunicorn==21.2.0
 certifi
->>>>>>> 49db06e (Make bot fully production-ready with /week, /month, /year and webhook script)
