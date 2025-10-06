@@ -1,5 +1,6 @@
 import os
 import datetime
+import asyncio
 from flask import Flask, request
 from pymongo import MongoClient
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
@@ -136,13 +137,13 @@ application.add_handler(CallbackQueryHandler(button_handler))
 
 # --- Flask webhook ---
 @app.route(f"/webhook/{TOKEN}", methods=["POST"])
-async def webhook():
+def webhook():
     """Handle Telegram updates from the webhook."""
     try:
         update = Update.de_json(request.get_json(force=True), application.bot)
-        await application.initialize()
-        await application.process_update(update)
-        await application.shutdown()
+        asyncio.run(application.initialize())
+        asyncio.run(application.process_update(update))
+        asyncio.run(application.shutdown())
     except Exception as e:
         print(f"Error in webhook: {e}")
     return "OK", 200
