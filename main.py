@@ -29,22 +29,19 @@ def format_expenses(records):
 
 # --- Command Handlers ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [
-        [InlineKeyboardButton("📅 Today", callback_data='today')],
-        [InlineKeyboardButton("📅 Last 7 Days", callback_data='week')],
-        [InlineKeyboardButton("📅 This Month", callback_data='month')],
-        [InlineKeyboardButton("📅 This Year", callback_data='year')]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(
-        "👋 Hi! I’m your Expense Tracker Bot.\n\n"
-        "Send me your expenses like this:\n"
-        "`Coffee 50`\n"
-        "and I’ll keep a record.\n\n"
-        "Or use the buttons below to check reports:",
-        parse_mode="Markdown",
-        reply_markup=reply_markup
-    )
+   await update.message.reply_text(
+    "👋 Hi! I’m your Expense Tracker Bot.\n\n"
+    "Send me your expenses like this:\n"
+    "`Coffee 50`\n"
+    "and I’ll keep a record.\n\n"
+    "You can also use these commands to check reports:\n"
+    "/today - Today's expenses\n"
+    "/week - Last 7 days\n"
+    "/month - This month\n"
+    "/year - This year",
+    parse_mode="Markdown"
+)
+
 
 async def add_expense(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.strip()
@@ -113,19 +110,6 @@ async def year(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = "\n".join(text_lines)
     await update.message.reply_text(f"📅 *Yearly Expenses ({year_str}):*\n{text}\n\n💰 *Total: ₹{total}*", parse_mode="Markdown")
 
-# --- Inline Button Callback ---
-async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    if query.data == "today":
-        await today(update, context)
-    elif query.data == "week":
-        await week(update, context)
-    elif query.data == "month":
-        await month(update, context)
-    elif query.data == "year":
-        await year(update, context)
-
 # --- Register Handlers ---
 application.add_handler(CommandHandler("start", start))
 application.add_handler(CommandHandler("today", today))
@@ -133,7 +117,6 @@ application.add_handler(CommandHandler("week", week))
 application.add_handler(CommandHandler("month", month))
 application.add_handler(CommandHandler("year", year))
 application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, add_expense))
-application.add_handler(CallbackQueryHandler(button_handler))
 
 # --- Flask webhook ---
 @app.route(f"/webhook/{TOKEN}", methods=["POST"])
