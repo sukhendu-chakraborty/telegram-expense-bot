@@ -136,17 +136,17 @@ application.add_handler(CallbackQueryHandler(button_handler))
 
 # --- Flask webhook ---
 @app.route(f"/webhook/{TOKEN}", methods=["POST"])
-def webhook():
-    update = Update.de_json(request.get_json(force=True), application.bot)
-
-    import asyncio
+async def webhook():
+    """Handle Telegram updates from the webhook."""
     try:
-        asyncio.run(application.process_update(update))
-    except RuntimeError:
-        loop = asyncio.get_event_loop()
-        loop.create_task(application.process_update(update))
-
+        update = Update.de_json(request.get_json(force=True), application.bot)
+        await application.initialize()
+        await application.process_update(update)
+        await application.shutdown()
+    except Exception as e:
+        print(f"Error in webhook: {e}")
     return "OK", 200
+
 
 
 
